@@ -48,18 +48,17 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # WhiteNoise after SecurityMiddleware
+    'corsheaders.middleware.CorsMiddleware',  # CorsMiddleware near the top
+    'django.contrib.sessions.middleware.SessionMiddleware',  # Before AuthenticationMiddleware
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
-
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
 ]
 
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_ALL_ORIGINS = False
 
 ROOT_URLCONF = 'churchsite.urls'
 
@@ -85,21 +84,7 @@ WSGI_APPLICATION = 'churchsite.wsgi.application'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'chchbackend',
-        'USER': 'jb',
-        'PASSWORD': os.getenv('DB_PASSWORD'),  # Make sure this is set correctly
-        'HOST': 'dpg-d13hk5ogjchc73cb2qtg-a.oregon-postgres.render.com',
-        'PORT': '5432',
-        'OPTIONS': {
-            'sslmode': 'require',
-            'connect_timeout': 5,
-            'keepalives': 1,
-            'keepalives_idle': 30,
-            'keepalives_interval': 10,
-        }
-    }
+    'default': dj_database_url.config(default='postgresql://jb:wJhScmLWEcmJX0UXGTAdnjKEN0iV7KNV@dpg-d13hk5ogjchc73cb2qtg-a.oregon-postgres.render.com/chchbackend')
 }
 
 # Password validation
@@ -147,3 +132,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",  # Example: React dev server
+    "https://churweb-kap.vercel.app",
+]
